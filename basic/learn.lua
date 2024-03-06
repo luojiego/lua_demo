@@ -149,3 +149,11 @@ print("math.sqrt(20) = " .. math.sqrt(20))
 
 require("print_hello")
 print_hello()
+
+print("type(print_hello): " .. type(print_hello))
+print("type(scores): " .. type(scores))
+print("type(false): " .. type(false))
+print("type(\"321\"): " .. type("321"))
+print("type(321): " .. type(321))
+print("type(3.1): " .. type(3.1))
+print("type(nil): " .. type(nil))
