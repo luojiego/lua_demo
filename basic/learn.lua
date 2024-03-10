@@ -191,3 +191,23 @@ if y3 then
 else
     print("y3 is false")
 end
+
+x=math.pi
+print("math.pi - math.pi%0.01: " .. x - x%0.01)
+print("math.pi - math.pi%0.001: " .. x - x%0.001)
+
+x, y = math.modf(3.14)
+print("math.modf(3.14): " .. x .. " " .. y)
+
+function round(x)
+    local f = math.floor(x)
+    if (x == f) or (x % 2.0 == 0.5) then 
+        return f
+    else
+        return math.floor(x + 0.5)
+    end
+end
+
+local x = 2^52 + 1
+print(string.format("%d %d", x, round(x+0.5)))
+print(string.format("%d %d", x, math.floor(x+0.5)))
