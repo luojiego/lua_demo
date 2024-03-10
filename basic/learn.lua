@@ -155,5 +155,39 @@ print("type(scores): " .. type(scores))
 print("type(false): " .. type(false))
 print("type(\"321\"): " .. type("321"))
 print("type(321): " .. type(321))
+print("math.type(321): " .. math.type(321))
 print("type(3.1): " .. type(3.1))
+print("math.type(3.1): " .. math.type(3.1))
 print("type(nil): " .. type(nil))
+print("type(type): " .. type(type))
+print("type(io.stdin): " .. type(io.stdin))
+print("type({}): " .. type({}))
+print("type(type(x)): " .. type(type(x)))
+
+local x3
+local y3
+print(x3)
+x3 = x3 or 9.8
+
+print("x3 is nil, after x3 = x3 or 9.8: " .. x3)
+-- nil == nil，返回 true
+-- x3 == y3，返回 false
+print (x3 == y3) 
+
+x3 = 0
+y3 = ""
+
+print("x3: " .. x3)
+print("y3: " .. y3)
+-- lua 中 0 和 "" 作为条件都是 true
+if x3 then 
+    print("x3 is true")
+else
+    print("x3 is false")
+end
+
+if y3 then 
+    print("y3 is true")
+else
+    print("y3 is false")
+end
