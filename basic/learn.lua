@@ -16,7 +16,14 @@ print(-b)
 -- 没有 !=，变成了 ~=
 -- 没有 { 和 }，变成 then 和 end
 -- 没有 else if 变成了 elseif
---
+-- # 参照 shell 可以取字符串的长度或者 table 的长度
+-- math 未提供 round 函数，由调用者实现（具体是否使用银行家算法）
+-- 数学运算时，当出现字符串时，优先将字符串转换成 number 处理，跟 JavaScript 相反（JS 中 + 其他优先连接）
+-- 数学运算时，float 和 integer 同时出现时，将 integer 转换为 float 来与其他 float 进行运算
+-- 0xa.b = 10 + 11/16 = 10.6875 这个用 16 进制也能用浮点是相当方便的
+-- 0x1p1 = 1 * 2^1 = 2
+-- 任何大于 2^53 的整数，转换为浮点数之后，跟原有的整数不再相等（不能用浮点数准确表示）
+
 local d = 5 
 if d ~= nil then
     print(d .. ' not nil' ) 
@@ -139,8 +146,11 @@ print("math.ceil(y) = " .. math.ceil(y))
 print("math.floor(y) = " .. math.floor(y))
 print("math.pi = " .. math.pi)
 
+-- math.random [0, 1)
 print("math.random() = " .. math.random())
+-- math.random [1, 100]
 print("math.random(100) = " .. math.random(100))
+-- math.random [20, 100]
 print("math.random(20, 100) = " .. math.random(20, 100))
 
 print("math.sqrt(100) = " .. math.sqrt(100))
@@ -199,7 +209,7 @@ print("math.pi - math.pi%0.001: " .. x - x%0.001)
 x, y = math.modf(3.14)
 print("math.modf(3.14): " .. x .. " " .. y)
 
-function round(x)
+local function round(x)
     local f = math.floor(x)
     if (x == f) or (x % 2.0 == 0.5) then 
         return f
@@ -211,3 +221,39 @@ end
 local x = 2^52 + 1
 print(string.format("%d %d", x, round(x+0.5)))
 print(string.format("%d %d", x, math.floor(x+0.5)))
+
+-- lua 中不能通过 math.tointeger 强制转换小数位不是 0 的数字
+print(math.tointeger(-258.0))
+print(math.tointeger(-258.8) == nil)
+print(math.tointeger(2^63) == nil)
+
+-- for x = 1, 10 表示的范围是 [1, 10]，不是 [1, 10)
+for x = 1, 10 do
+    print(x)
+end
+
+-- 2^3^4 优先级从右往左，是 2^(3^4)，不是 (2^3)^4
+print(2^3^4)
+
+local content = [==[
+a = b[c[i]]
+]==]
+print(content)
+
+local str = "abc\z
+            def"
+print(str)
+
+print(tonumber(" 3") == 3)
+print(tonumber(" 10e3") == 10000)
+print(tonumber("10e") == nil)
+print(tonumber("0x1.3p-4") == 0.07421875)
+print(tonumber("100101", 2) == 37)
+print(tonumber("ff", 16) == 255)
+print(tonumber("-ZZ", 36) == -1295)
+print(tonumber("987", 8) == nil)
+
+t = {10, print, x = 12, k = "hi"}
+for k, v in pairs(t) do
+    print(k, v)
+end
