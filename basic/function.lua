@@ -158,3 +158,46 @@ local t = {1, 2, 3, 4, 5}
 printAll(t)
 printWithoutFirst(1, 2, 3, 4, 5, nil)
 printWithoutLast(1, 2, 3, 4, 5, nil)
+
+-- 初始化随机数种子
+math.randomseed(os.time())
+
+-- Fisher-Yates(Knuth 洗牌算法) shuffle
+local function shuffleList(t)
+    local n = #t
+    for i = n, 2, -1 do
+        local j = math.random(i)
+        t[i], t[j] = t[j], t[i]
+    end
+    return t
+end
+
+local list = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+list = shuffleList(list)
+for i, v in ipairs(list) do
+    print(i, v)
+end
+
+local function printCombinations(array, m, prefix)
+    prefix = prefix or {}
+    if m == 0 then
+        print(table.concat(prefix, ", "))
+        return
+    end
+
+    if #array < m then
+        return
+    end
+
+    for i = 1, #array do
+        local next = table.remove(array, 1)
+        table.insert(prefix, next)
+        printCombinations(array, m-1, prefix)
+        table.insert(array, next) -- 插入到最后一个位置
+        table.remove(prefix) -- 移除最后一个元素
+    end
+end
+
+local arr = {1,2,3,4,5,6}
+local groupSize = 3
+printCombinations(arr, groupSize)
