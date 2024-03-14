@@ -31,6 +31,17 @@ if #arg == 2 then
 
     table.sort(lines)
 
+    do 
+        local f = assert(io.open(arg[2], "r"))
+        if f then
+            print("文件已经存在，是否覆盖(y/n)?")
+            local c = io.read()
+            if c ~= 'y' and c ~= 'Y' then
+                os.exit(0)
+            end
+        end
+    end
+
     local w = assert(io.open(arg[2], "w"))
 
     for _, v in pairs(lines) do
