@@ -34,7 +34,7 @@ end
     
 
 local elapsed = os.clock() - start
-print(("took %.2f seconds"):format(elapsed))
+print(("took %.5f seconds"):format(elapsed))
 
 -- 读取一个 22MB 的文件中内容
 -- 方式 1: 逐行读取并拼接 时间超过 5 分钟也没有完成
