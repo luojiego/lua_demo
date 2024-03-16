@@ -23,3 +23,22 @@ while exit ~= true do
         end
     end
 end
+
+--[[
+    递归调用时，需要提前定义 fact1
+local fact1 = function (n)
+    if n == 0 then return 1
+    else return n * fact1(n-1)
+    end
+end
+fact1(10)
+]]
+
+local fact1
+fact1 = function (n)
+    if n == 0 then return 1
+    else return n * fact1(n-1)
+    end
+end
+
+print(fact1(5))
