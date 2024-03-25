@@ -58,11 +58,12 @@ end
 
 function CMD.online(client)
     local name = client.name
+    print(("玩家 %s 上线"):format(name))
     if roles[name] then
         roles[name] = client
         roles[name].isonline = 1
-        broadcast(("玩家 %s 已经上线"):format(name))
-        sendto(client.fd, ("范围变成 [%d-%d]，接下来由 %s 来操作"):format(game.down_limit, game.up_limit, game.turns[game.user_turn]))
+        broadcast(("%s 玩家已经上线"):format(name))
+        sendto(client.fd, ("范围变为 [%d - %d], 接下来由 %s 来操作"):format(game.down_limit, game.up_limit, game.turns[game.user_turn]))
     end
     skynet.retpack()
 end
@@ -93,7 +94,7 @@ function CMD.guess(name, val)
     game.user_turn = game.user_turn % 3 + 1
     local next = game.turns[game.user_turn]
     if val == game.random_value then
-        broadcast(("游戏结束，%s 猜对了数字 %d，输入"):format(name, val))
+        broadcast(("游戏结束，%s 猜中了数字 %d，输了"):format(name, val))
         game_over()
         return
     end
@@ -101,21 +102,21 @@ function CMD.guess(name, val)
     if val < game.random_value then
         game.down_limit = val + 1
         if game.down_limit == game.up_limit then
-            broadcast(("游戏结束，只剩下一个数字 %d %s输入"):format(val+1, next))
+            broadcast(("游戏结束，只剩下一个数字 %d %s 输了"):format(val+1, next))
             game_over()
             return
         end
-        broadcast(("%s 输入的数字太小，范围变为范围变成 [%d - %d]，接下来由 %s 来操作"):format(name, val, game.down_limit, game.up_limit, next))
+        broadcast(("%s 输入的数字太小，范围变为范围变成 [%d - %d]，接下来由 %s 来操作"):format(name, game.down_limit, game.up_limit, next))
     end
 
     if val > game.random_value then
         game.up_limit = val - 1
         if game.down_limit == game.up_limit then
-            broadcast(("游戏结束，只剩下一个数字 %d %s输入"):format(val-1, next))
+            broadcast(("游戏结束，只剩下一个数字 %d %s 输了"):format(val-1, next))
             game_over()
             return
         end
-        broadcast(("%s 输入的数字太大，范围变为范围变成 [%d - %d]，接下来由 %s 来操作"):format(name, game.down_limit, val, game.up_limit, next))
+        broadcast(("%s 输入的数字太大，范围变为范围变成 [%d - %d]，接下来由 %s 来操作"):format(name, game.down_limit, game.up_limit, next))
     end
 end
 

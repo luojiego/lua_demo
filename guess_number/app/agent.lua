@@ -30,6 +30,7 @@ local rds = setmetatable({0}, {
                 return skynet.call(red[1], "lua", k, ...)
             end
         end
+        return t[k]
     end
 })
 
@@ -56,15 +57,16 @@ function CMD.login(name, password)
         client_quit()
         return
     end
+    print(("login name: %s"):format(name))
 
-    local ok = rds:exists("role: "..name)
+    local ok = rds:exists("role:"..name)
     if not ok then
         local score = 1000
         -- 满足条件唤醒协程，不满足条件挂起协程
         rds:hmset("role:" .. name, tunpack({
             "name", name,
             "password", password,
-            "score", score
+            "score", score,
             "isgame", 0,
         }))
         client.name = name
@@ -85,8 +87,10 @@ function CMD.login(name, password)
         client.agent = skynet.self()
     end
 
+    -- 玩家在游戏中
     if client.isgame > 0 then
-        ok = pcall(skynet.call, client.isgame, "lua", "online", client.name)
+        -- 但是调用 room 的 online 时失败了，游戏可能正好结束了
+        ok = pcall(skynet.call, client.isgame, "lua", "online", client)
         if not ok then
             client.isgame = 0
             sendto("请准备开始游戏……")
@@ -134,6 +138,7 @@ function CMD.guess(number)
         return
     end
 
+    -- client.isgame 是服务的地址？？
     skynet.send(client.isgame, "lua", "guess", client.name, numb)
 end
 
@@ -173,6 +178,7 @@ local function process_socket_events()
             pms[#pms + 1] = pm
         end
 
+        -- next 用于获取 pms 中的第一个键值对，若返回 nil 则表示 pms 为空
         if not next(pms) then
             sendto("error[format], recv data")
             goto __continue__
@@ -184,6 +190,8 @@ local function process_socket_events()
             CMD.help()
             goto __continue__
         end
+        -- 启动一个新的协程
+        -- unpack(pms) 返回的是一个数组，select(2, tunpack(pms)) 返回的是除了第一个元素之外的所有元素
         skynet.fork(CMD[cmd], select(2, tunpack(pms)))
 ::__continue__::
     end
@@ -193,7 +201,7 @@ end
 skynet.start(function ()
     print("recv a connection: ", clientfd, addr)
     rds[1] = skynet.uniqueservice("redis")
-    hall = skynet.uniqueservice("hall")
+    hall = skynet.uniqueservice("hall") -- 找到大厅服务
     socket.start(clientfd)
     skynet.fork(process_socket_events)
     skynet.dispatch("lua", function (_, _, cmd, ...)
